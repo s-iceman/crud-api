@@ -1,0 +1,30 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "CRUD API",
+  "type": "module",
+  "scripts": {
+    "start:prod": "node src/start.ts",
+    "start:dev": "nodemon src/start.ts",
+    "lint": "eslint src"
+  },
+  "keywords": [],
+  "author": "s_iceman",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "latest",
+    "dotenv": "latest",
+    "uuid": "latest"
+  },
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-prettier": "latest",
+    "nodemon": "latest",
+    "prettier": "latest",
+    "ts-node": "latest",
+    "typescript": "latest",
+    "webpack": "latest",
+    "webpack-cli": "latest"
+  }
+}
