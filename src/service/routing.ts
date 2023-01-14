@@ -1,6 +1,6 @@
 import * as url from 'url';
 import { ServerResponse, IncomingMessage} from 'node:http';
-import { StatusCodes, ENDPOINT } from '../constants';
+import { StatusCodes, ENDPOINT, Messages } from './constants';
 import { IUser, IDatabase } from '../model/interfaces';
 import { IRouter } from './interfaces';
 import { validate } from './validators';
@@ -27,25 +27,19 @@ export class UsersApiRouter implements IRouter {
       return;
     }
 
-    const handler = this.handlers[req.method];
-    if (handler) {
-      const reqUrl = url.parse(req.url).pathname;
-      handler(reqUrl, req, res);
-    }
-      /*
-          if(reqUrl == "/") {
-        res.setHeader("Content-Type", "application/json");
-        res.writeHead(400);
-        res.end(`{"message": "This is a JSON response: ERROR"}`);
-     }
-    */
-    };
-
-  private processGetRequest(url: string, req: IncomingMessage, res: ServerResponse): void {
-    if (!validate(url)) {
+    const reqUrl = url.parse(req.url).pathname;
+    if (!validate(reqUrl)) {
+      this.sendError(res);
       return;
     }
 
+    const handler = this.handlers[req.method];
+    if (handler) {
+      handler(reqUrl, req, res);
+    }
+  };
+
+  private processGetRequest(url: string, req: IncomingMessage, res: ServerResponse): void {
     if (url == ENDPOINT) {
       this.getUsers(res);
     }
@@ -55,5 +49,11 @@ export class UsersApiRouter implements IRouter {
     res.setHeader('Content-Type', 'application/json');
     res.writeHead(StatusCodes.OK);
     res.end(JSON.stringify(this.database.getUsers(), null, '\n'));
+  }
+
+  private sendError(res: ServerResponse): void {
+    res.setHeader('Content-Type', 'application/json');
+    res.writeHead(StatusCodes.NotFound);
+    res.end(JSON.stringify(Messages.NotFound));
   }
 }

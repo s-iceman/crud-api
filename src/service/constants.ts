@@ -9,7 +9,12 @@ enum StatusCodes {
 
 const ENDPOINT = '/api/users';
 
+enum Messages {
+  NotFound = `Sorry, we couldn't find this address.`,
+}
+
 export {
   StatusCodes,
   ENDPOINT,
+  Messages,
 }
