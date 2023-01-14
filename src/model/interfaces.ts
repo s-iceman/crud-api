@@ -5,6 +5,11 @@ interface IUser {
   hobbies: Array<string>;
 };
 
+interface IDatabase {
+  getUsers(): Array<IUser>;
+};
+
 export {
   IUser,
+  IDatabase,
 }

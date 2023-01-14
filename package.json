@@ -14,9 +14,10 @@
     "@types/http-server": "^0.12.1",
     "cross-env": "latest",
     "dotenv": "latest",
-    "uuid": "latest"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.0",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
     "eslint-plugin-prettier": "latest",

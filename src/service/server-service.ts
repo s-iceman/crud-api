@@ -1,33 +1,38 @@
 import * as http from 'node:http';
 import { config } from 'dotenv';
-import { IServerSettings } from './interfaces';
-import { route } from './routing';
+
+import { IServerService, IRouter } from './interfaces';
+import { UsersApiRouter } from './routing';
+import { IDatabase } from '../model/interfaces';
 
 
-export class ServerService implements IServerSettings {
+export class ServerService implements IServerService {
   private server: http.Server;
+
   private host: string;
   private port: number;
+
+  private database: IDatabase | undefined;
+  private router: IRouter;
 
   constructor(host: string, defalutPort: number) {
     config();
     this.host = host;
     this.port = +process.env.PORT || defalutPort;
+    this.router = new UsersApiRouter();
+  }
+
+  connect(database: IDatabase): void {
+    this.database = database;
+    this.router.connect(database);
   }
 
   start() {
-    const requestListener = function (req: http.IncomingMessage, res: http.ServerResponse) {
-      const result = route(req);
-      
-      res.setHeader("Content-Type", "application/json");
-        res.writeHead(200);
-        res.end(`{"message": "This is a JSON response: ${result}"}`);
-    };
-
-    this.server = http.createServer(requestListener);
+    this.server = http.createServer(this.router.route.bind(this.router));
     this.server.listen(this.port, this.host, () => {
-      console.log(`Server is running on http://${this.host}:${this.port}`);
+      console.log(
+        `Server is running on http://${this.host}:${this.port}`
+      );
     });
   }
-
 };
