@@ -1,7 +1,7 @@
 import path from "path";
 
 module.exports = {
-  entry: path.resolve(__dirname, 'src/start.ts'),
+  entry: path.resolve(__dirname, 'src/app.ts'),
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),

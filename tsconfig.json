@@ -3,12 +3,12 @@
     "outDir": "./dist/",
     "rootDir": "./src",
     "noImplicitAny": false,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "target": "es5",
+    "module": "CommonJS", // ESNext",
+    // "moduleResolution": "node",
+    "target": "es6",
     "esModuleInterop": true,
   },
-  "ts-node": {
-    "esm": true
-  }
+  // "ts-node": {
+  //  "esm": true
+  //}
 }
