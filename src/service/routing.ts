@@ -2,10 +2,12 @@ import * as url from 'url';
 import { ServerResponse, IncomingMessage} from 'node:http';
 import { StatusCodes, ENDPOINT, Messages } from './constants';
 import { IUser, IDatabase } from '../model/interfaces';
+import { UserNotFoundError } from '../model/errors';
 import { IRouter } from './interfaces';
-import { validate } from './validators';
+import { validateEndpoint, validateUserId } from './validators';
 
 type HandlerCollection = object;
+type ResultType = Array<IUser> | IUser | string;
 
 
 export class UsersApiRouter implements IRouter {
@@ -28,32 +30,48 @@ export class UsersApiRouter implements IRouter {
     }
 
     const reqUrl = url.parse(req.url).pathname;
-    if (!validate(reqUrl)) {
-      this.sendError(res);
+    if (!validateEndpoint(reqUrl)) {
+      this.sendResult(res, StatusCodes.NotFound, Messages.AddressNotFound);
       return;
     }
 
     const handler = this.handlers[req.method];
     if (handler) {
-      handler(reqUrl, req, res);
+      handler(reqUrl, res);
     }
   };
 
-  private processGetRequest(url: string, req: IncomingMessage, res: ServerResponse): void {
+  private processGetRequest(url: string, res: ServerResponse): void {
     if (url == ENDPOINT) {
-      this.getUsers(res);
+      const users = this.database.getUsers();
+      this.sendResult(res, StatusCodes.OK, users);
+    } else {
+      this.getUser(url, res);
     }
   }
 
-  private getUsers(res: ServerResponse): void {
-    res.setHeader('Content-Type', 'application/json');
-    res.writeHead(StatusCodes.OK);
-    res.end(JSON.stringify(this.database.getUsers(), null, '\n'));
+  private getUser(url: string, res: ServerResponse): void {
+    const userId = this.getUserId(url);
+    if (!validateUserId(userId)) {
+      this.sendResult(res, StatusCodes.BadRequest, Messages.InvalidUserId);
+      return;
+    }
+
+    try {
+      const user = this.database.getUser(userId);
+      this.sendResult(res, StatusCodes.OK, user);
+    } catch (error) {
+      this.sendResult(res, StatusCodes.NotFound, Messages.UserNotFound);
+    }
   }
 
-  private sendError(res: ServerResponse): void {
-    res.setHeader('Content-Type', 'application/json');
-    res.writeHead(StatusCodes.NotFound);
-    res.end(JSON.stringify(Messages.NotFound));
+  private sendResult(response: ServerResponse, code: number, result: ResultType): void {
+    response.setHeader('Content-Type', 'application/json');
+    response.writeHead(code);
+    response.end(JSON.stringify(result, null, '\n'));
+  }
+
+  private getUserId(url: string): string {
+    return url.slice(ENDPOINT.length + 1);
   }
 }

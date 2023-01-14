@@ -1,7 +1,21 @@
 import { ENDPOINT } from './constants';
 
-const PATTERN = new RegExp('^' + ENDPOINT + '(//[\w]{8}(-[\w]{4}){3}-[\w]{12})?$');
+const ENDPOINT_PATTERN = new RegExp('^' + ENDPOINT + '\/?');
+const UUID_PATTERN = new RegExp('^([\\w\\d]{8}(-[\\w\\d]{4}){3}-[\\w\\d]{12})$');
 
-export const validate = (url: string) : boolean => {
-  return PATTERN.test(url);
+
+const validateUserId = (userId: string): boolean => {
+  return UUID_PATTERN.test(userId);
+}
+
+const validateEndpoint = (url: string): boolean => {
+  if (ENDPOINT_PATTERN.test(url)) {
+    return true;
+  }
+  return url.slice(ENDPOINT.length, 1) == '\\';
+}
+
+export {
+  validateEndpoint,
+  validateUserId,
 }

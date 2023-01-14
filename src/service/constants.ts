@@ -10,7 +10,9 @@ enum StatusCodes {
 const ENDPOINT = '/api/users';
 
 enum Messages {
-  NotFound = `Sorry, we couldn't find this address.`,
+  AddressNotFound = `Sorry, we couldn't find this address.`,
+  UserNotFound = `User with this id not found`,
+  InvalidUserId = `Invalid format of user id`,
 }
 
 export {

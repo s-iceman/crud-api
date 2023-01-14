@@ -1,5 +1,6 @@
-import { IUser, IDatabase } from './interfaces';
 import { v4 } from 'uuid';
+import { IUser, IDatabase } from './interfaces';
+import { UserNotFoundError } from './errors';
 
 
 export class UserDatabase implements IDatabase {
@@ -18,6 +19,13 @@ export class UserDatabase implements IDatabase {
         users.push({id: key, ...value});
     });
     return users;
+  }
+
+  getUser(userId: string): IUser | never {
+    if (this.users.has(userId)) {
+      return {id: userId, ...this.users.get(userId)};
+    }
+    throw new UserNotFoundError();
   }
 
   private generateId(): string {
