@@ -15,7 +15,12 @@ const validateEndpoint = (url: string): boolean => {
   return url.slice(ENDPOINT.length, 1) == '\\';
 }
 
+const validateUserFields = (): boolean => {
+  return false;
+}
+
 export {
   validateEndpoint,
   validateUserId,
+  validateUserFields,
 }

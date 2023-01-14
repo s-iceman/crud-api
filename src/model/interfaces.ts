@@ -8,6 +8,7 @@ interface IUser {
 interface IDatabase {
   getUsers(): Array<IUser>;
   getUser(userId: string): IUser | never;
+  deleteUser(userId: string): void | never;
 };
 
 export {

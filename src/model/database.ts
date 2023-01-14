@@ -28,6 +28,13 @@ export class UserDatabase implements IDatabase {
     throw new UserNotFoundError();
   }
 
+  deleteUser(userId: string): void | never {
+    if (!this.users.has(userId)) {
+      throw new UserNotFoundError();
+    }
+    this.users.delete(userId);
+  }
+
   private generateId(): string {
     while (true) {
       const userId = v4();

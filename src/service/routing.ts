@@ -2,12 +2,12 @@ import * as url from 'url';
 import { ServerResponse, IncomingMessage} from 'node:http';
 import { StatusCodes, ENDPOINT, Messages } from './constants';
 import { IUser, IDatabase } from '../model/interfaces';
-import { UserNotFoundError } from '../model/errors';
 import { IRouter } from './interfaces';
 import { validateEndpoint, validateUserId } from './validators';
 
 type HandlerCollection = object;
 type ResultType = Array<IUser> | IUser | string;
+type Command = (userId: string) => IUser | void | never;
 
 
 export class UsersApiRouter implements IRouter {
@@ -17,6 +17,8 @@ export class UsersApiRouter implements IRouter {
   constructor() {
     this.handlers = {
       'GET': this.processGetRequest.bind(this),
+      'POST': this.processPostRequest.bind(this),
+      'DELETE': this.processDeleteRequest.bind(this),
     };
   }
 
@@ -50,7 +52,19 @@ export class UsersApiRouter implements IRouter {
     }
   }
 
+  private processPostRequest(url: string, res: ServerResponse): void {
+    return;
+  }
+
+  private processDeleteRequest(url: string, res: ServerResponse): void {
+    this.processUser(url, res, this.database.deleteUser.bind(this.database));
+  }
+
   private getUser(url: string, res: ServerResponse): void {
+    this.processUser(url, res, this.database.getUser.bind(this.database));
+  }
+
+  private processUser(url: string, res: ServerResponse, op: Command): void {
     const userId = this.getUserId(url);
     if (!validateUserId(userId)) {
       this.sendResult(res, StatusCodes.BadRequest, Messages.InvalidUserId);
@@ -58,17 +72,24 @@ export class UsersApiRouter implements IRouter {
     }
 
     try {
-      const user = this.database.getUser(userId);
-      this.sendResult(res, StatusCodes.OK, user);
+      const result = op(userId);
+      console.log(`!!!! ${result}`);
+      if (result) {
+        this.sendResult(res, StatusCodes.OK, result);
+      } else {
+        this.sendResult(res, StatusCodes.NoContent);
+      }
     } catch (error) {
       this.sendResult(res, StatusCodes.NotFound, Messages.UserNotFound);
     }
   }
 
-  private sendResult(response: ServerResponse, code: number, result: ResultType): void {
+  private sendResult(response: ServerResponse, code: number, result?: ResultType): void {
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(code);
-    response.end(JSON.stringify(result, null, '\n'));
+    if (result !== undefined) {
+      response.end(JSON.stringify(result, null, '\n'));
+    }
   }
 
   private getUserId(url: string): string {
