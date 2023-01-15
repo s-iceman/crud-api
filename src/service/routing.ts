@@ -1,4 +1,3 @@
-import * as url from 'url';
 import { ServerResponse, IncomingMessage} from 'node:http';
 import { StatusCodes, ENDPOINT, Messages } from './constants';
 import { IUser, IDatabase } from '../model/interfaces';
@@ -47,7 +46,7 @@ export class UsersApiRouter implements IRouter {
         return;
       }
   
-      const reqUrl = url.parse(req.url).pathname;
+      const reqUrl = req.url;
       if (!validateEndpoint(reqUrl)) {
         this.sendResult({
           res,

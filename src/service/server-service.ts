@@ -15,10 +15,11 @@ export class ServerService implements IServerService {
   private database: IDatabase | undefined;
   private router: IRouter;
 
-  constructor(host: string, defalutPort: number) {
+  constructor(host: string, defaultPort: number) {
     config();
     this.host = host;
-    this.port = +process.env.PORT || defalutPort;
+    const port = process.env.PORT || defaultPort;
+    this.port = +port;
     this.router = new UsersApiRouter();
   }
 

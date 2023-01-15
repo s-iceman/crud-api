@@ -3,12 +3,8 @@
     "outDir": "./dist/",
     "rootDir": "./src",
     "noImplicitAny": false,
-    "module": "CommonJS", // ESNext",
-    // "moduleResolution": "node",
+    "module": "CommonJS",
     "target": "es6",
     "esModuleInterop": true,
   },
-  // "ts-node": {
-  //  "esm": true
-  //}
 }

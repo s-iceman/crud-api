@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "CRUD API",
   "scripts": {
-    "start:prod": "node src/app.ts",
+    "start:prod": "webpack --mode=production && node dist/bundle.js",
     "start:dev": "nodemon src/app.ts",
     "lint": "eslint src --ext .ts"
   },
@@ -22,9 +22,10 @@
     "@typescript-eslint/parser": "^5.48.1",
     "eslint": "^8.32.0",
     "nodemon": "latest",
+    "ts-loader": "^9.4.2",
     "ts-node": "latest",
     "typescript": "latest",
-    "webpack": "latest",
-    "webpack-cli": "latest"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }
