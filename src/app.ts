@@ -6,7 +6,11 @@ import { IDatabase } from './model/interfaces';
 
 
 const db: IDatabase = new UserDatabase();
-const server: IServerService = new ServerService(HOST, DEFAULT_PORT);
+const service: IServerService = new ServerService(HOST, DEFAULT_PORT);
 
-server.connect(db);
-server.start();
+service.connect(db);
+service.start();
+
+export {
+  service
+}

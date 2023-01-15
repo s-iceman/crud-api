@@ -1,10 +1,13 @@
+import * as http from 'node:http';
 import { IncomingMessage, ServerResponse } from 'http';
 import { IDatabase } from '../model/interfaces';
 
 
 interface IServerService {
-  start() : void;
-  connect(database: IDatabase): void,
+  start(): void;
+  connect(database: IDatabase): void;
+  close(): void;
+  getServer(): http.Server;
 }
 
 interface IRouter {

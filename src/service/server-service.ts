@@ -23,6 +23,10 @@ export class ServerService implements IServerService {
     this.router = new UsersApiRouter();
   }
 
+  getServer(): http.Server {
+    return this.server;
+  }
+
   connect(database: IDatabase): void {
     this.database = database;
     this.router.connect(database);
@@ -35,5 +39,9 @@ export class ServerService implements IServerService {
         `Server is running on http://${this.host}:${this.port}`
       );
     });
+  }
+
+  close(): void {
+    this.server.close();
   }
 }

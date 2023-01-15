@@ -17,7 +17,7 @@
   "plugins": [
     "@typescript-eslint"
   ],
-  "ignorePatterns": ["webpack.config.js"],
+  "ignorePatterns": ["webpack.config.js", "tests/", "jest.config.js"],
   "rules": {
     "no-constant-condition": "off",
     "no-useless-escape": "off",
