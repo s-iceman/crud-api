@@ -22,9 +22,9 @@ const validateUserFields = (params: object): boolean => {
     return false;
   }
 
-  const username = params['username'];
-  const age = params['age'];
-  const hobbies = params['hobbies'];
+  const username = <string>params['username'];
+  const age = <string>params['age'];
+  const hobbies = <string>params['hobbies'];
 
   return (
     typeof username === 'string' && username.length > 0 &&

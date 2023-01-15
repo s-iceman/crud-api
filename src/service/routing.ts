@@ -5,7 +5,8 @@ import { IUser, IDatabase } from '../model/interfaces';
 import { IRouter } from './interfaces';
 import { validateEndpoint, validateUserFields, validateUserId } from './validators';
 
-type HandlerCollection = object;
+type Handler = (url: string, res: ServerResponse, req?: IncomingMessage) => Promise<void>;
+type HandlerCollection = Record<string, Handler>;
 type ResultType = Array<IUser> | IUser | string;
 type Command<T, U> = (param: T) => U | never;
 type CommandOptions = {
@@ -29,10 +30,10 @@ export class UsersApiRouter implements IRouter {
 
   constructor() {
     this.handlers = {
-      'GET': this.processGetRequest.bind(this),
-      'POST': this.processPostRequest.bind(this),
-      'PUT': this.processPutRequest.bind(this),
-      'DELETE': this.processDeleteRequest.bind(this),
+      'GET': <Handler>this.processGetRequest.bind(this),
+      'POST': <Handler>this.processPostRequest.bind(this),
+      'PUT': <Handler>this.processPutRequest.bind(this),
+      'DELETE': <Handler>this.processDeleteRequest.bind(this),
     };
   }
 
@@ -41,32 +42,40 @@ export class UsersApiRouter implements IRouter {
   }
 
   async route(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    if (!this.handlers) {
-      return;
-    }
+    try {
+      if (!this.handlers) {
+        return;
+      }
+  
+      const reqUrl = url.parse(req.url).pathname;
+      if (!validateEndpoint(reqUrl)) {
+        this.sendResult({
+          res,
+          code: StatusCodes.NotFound,
+          result: Messages.AddressNotFound}
+        );
+        return;
+      }
 
-    const reqUrl = url.parse(req.url).pathname;
-    if (!validateEndpoint(reqUrl)) {
+      const handler = this.handlers[req.method];
+      if (handler) {
+        await handler(reqUrl, res, req);
+      }
+    } catch (error) {
       this.sendResult({
         res,
-        code: StatusCodes.NotFound,
-        result: Messages.AddressNotFound}
-      );
-      return;
+        code: StatusCodes.InternalServerError,
+        result: Messages.ServerError,
+      });
     }
+  }
 
-    const handler = this.handlers[req.method];
-    if (handler) {
-      await handler(reqUrl, res, req);
-    }
-  };
-
-  private async processGetRequest(url: string, res: ServerResponse, req?: IncomingMessage): Promise<void> {
+  private async processGetRequest(url: string, res: ServerResponse): Promise<void> {
     if (url == ENDPOINT) {
       const users = this.database.getUsers();
       this.sendResult({res, code: StatusCodes.OK, result: users});
     } else {
-      this.getUser(url, res);
+      await this.getUser(url, res);
     }
   }
 
@@ -75,7 +84,7 @@ export class UsersApiRouter implements IRouter {
       res, req,
       withBody: true,
       successCode: StatusCodes.Created,
-      func: this.database.createUser.bind(this.database)
+      func: <Command<IUser, IUser>>this.database.createUser.bind(this.database)
     });
   }
 
@@ -86,21 +95,21 @@ export class UsersApiRouter implements IRouter {
         {
           userId, res, req,
           successCode: StatusCodes.OK,
-          func: this.database.updateUser.bind(this.database),
+          func: <Command<IUser, IUser>>this.database.updateUser.bind(this.database),
           withBody: true
         }
       );
     }
   }
 
-  private async processDeleteRequest(url: string, res: ServerResponse, req?: IncomingMessage): Promise<void> {
+  private async processDeleteRequest(url: string, res: ServerResponse): Promise<void> {
     const userId = this.getUserId(url, res);
     if (userId) {
       await this.process(
         {
           userId, res,
           successCode: StatusCodes.NoContent,
-          func: this.database.deleteUser.bind(this.database)}
+          func: <Command<IUser, void>>this.database.deleteUser.bind(this.database)}
       );
     }
   }
@@ -112,7 +121,7 @@ export class UsersApiRouter implements IRouter {
         {
           userId, res,
           successCode: StatusCodes.OK,
-          func: this.database.getUser.bind(this.database)
+          func: <Command<IUser, IUser>>this.database.getUser.bind(this.database)
         }
       );
     }
@@ -180,8 +189,7 @@ export class UsersApiRouter implements IRouter {
 
       req.on('end', () => {
         try {
-          let jsonBody = JSON.parse(body);
-          resolve(jsonBody);
+          resolve(JSON.parse(body));
         } catch (error) {
           reject();
         }

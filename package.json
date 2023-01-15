@@ -5,7 +5,7 @@
   "scripts": {
     "start:prod": "node src/app.ts",
     "start:dev": "nodemon src/app.ts",
-    "lint": "eslint src"
+    "lint": "eslint src --ext .ts"
   },
   "keywords": [],
   "author": "s_iceman",
@@ -18,11 +18,10 @@
   },
   "devDependencies": {
     "@types/uuid": "^9.0.0",
-    "eslint": "latest",
-    "eslint-config-prettier": "latest",
-    "eslint-plugin-prettier": "latest",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "eslint": "^8.32.0",
     "nodemon": "latest",
-    "prettier": "latest",
     "ts-node": "latest",
     "typescript": "latest",
     "webpack": "latest",

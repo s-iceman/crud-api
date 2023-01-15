@@ -11,7 +11,7 @@ export class UserDatabase implements IDatabase {
   }
 
   getUsers(): Array<IUser> {
-    const users = [];
+    const users: Array<IUser> = [];
     this.users.forEach((value, key) => {
         users.push({id: key, ...value});
     });
@@ -57,4 +57,4 @@ export class UserDatabase implements IDatabase {
       }
     }
   }
-};
+}

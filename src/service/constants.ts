@@ -5,7 +5,7 @@ enum StatusCodes {
   BadRequest = 400,
   NotFound = 404,
   InternalServerError = 500,
-};
+}
 
 const ENDPOINT = '/api/users';
 
@@ -15,6 +15,7 @@ enum Messages {
   InvalidUserId = 'Invalid format of user id',
   InvalidJsonFormat = 'Invalid JSON format. You should use double quotes.',
   InvalidParams = 'Unable to create a user. You have sent invalid parameters (required fields: name, age, hobbies).',
+  ServerError = 'Sorry, something went wrong. Try again.',
 }
 
 export {

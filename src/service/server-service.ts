@@ -35,4 +35,4 @@ export class ServerService implements IServerService {
       );
     });
   }
-};
+}

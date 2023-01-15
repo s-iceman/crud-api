@@ -3,7 +3,7 @@ interface IUser {
   username?: string;
   age?: number;
   hobbies?: Array<string>;
-};
+}
 
 interface IDatabase {
   getUsers(): Array<IUser>;
@@ -11,7 +11,7 @@ interface IDatabase {
   deleteUser(user: IUser): void | never;
   createUser(user: IUser): IUser;
   updateUser(user: IUser): IUser | never;
-};
+}
 
 export {
   IUser,
