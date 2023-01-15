@@ -18,7 +18,8 @@ export class UserDatabase implements IDatabase {
     return users;
   }
 
-  getUser(userId: string): IUser | never {
+  getUser(user: IUser): IUser | never {
+    const {id: userId} = user;
     if (this.users.has(userId)) {
       return {id: userId, ...this.users.get(userId)};
     }
@@ -32,15 +33,16 @@ export class UserDatabase implements IDatabase {
   }
 
   updateUser(user: IUser): IUser | never {
-    const {id, ...updatedUser} = user;
-    if (!this.users.has(id)) {
+    const {id: userId, ...updatedUser} = user;
+    if (!this.users.has(userId)) {
       throw new UserNotFoundError();
     }
-    this.users.set(id, updatedUser);
+    this.users.set(userId, updatedUser);
     return user;
   }
 
-  deleteUser(userId: string): void | never {
+  deleteUser(user: IUser): void | never {
+    const {id: userId} = user;
     if (!this.users.has(userId)) {
       throw new UserNotFoundError();
     }

@@ -80,7 +80,17 @@ export class UsersApiRouter implements IRouter {
   }
 
   private async processPutRequest(url: string, res: ServerResponse, req: IncomingMessage): Promise<void> {
-    return;
+    const userId = this.getUserId(url, res);
+    if (userId) {
+      await this.process(
+        {
+          userId, res, req,
+          successCode: StatusCodes.OK,
+          func: this.database.updateUser.bind(this.database),
+          withBody: true
+        }
+      );
+    }
   }
 
   private async processDeleteRequest(url: string, res: ServerResponse, req?: IncomingMessage): Promise<void> {
@@ -123,7 +133,7 @@ export class UsersApiRouter implements IRouter {
       }
     }
 
-    const param = withBody ? body : userId;
+    const param = this.packUserParam(userId, body);
     try {
       const result = func(param);
       const options = result ? {res, result, code: successCode} : {res, code: successCode};
@@ -131,6 +141,13 @@ export class UsersApiRouter implements IRouter {
     } catch (error) {
       this.sendResult({res, code: StatusCodes.NotFound, result: Messages.UserNotFound});
     }
+  }
+
+  private packUserParam(userId?: string, userBody?: IUser): IUser {
+    if (userId && userBody) {
+      return {id: userId, ...userBody};
+    }
+    return (userBody) ? userBody : {id: userId};
   }
 
   private getUserId(url: string, res: ServerResponse): string | undefined {
