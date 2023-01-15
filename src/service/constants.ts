@@ -10,9 +10,11 @@ enum StatusCodes {
 const ENDPOINT = '/api/users';
 
 enum Messages {
-  AddressNotFound = `Sorry, we couldn't find this address.`,
-  UserNotFound = `User with this id not found`,
-  InvalidUserId = `Invalid format of user id`,
+  AddressNotFound = `Sorry, we couldn't find this address`,
+  UserNotFound = 'User with this id not found',
+  InvalidUserId = 'Invalid format of user id',
+  InvalidJsonFormat = 'Invalid JSON format. You should use double quotes.',
+  InvalidParams = 'Unable to create a user. You have sent invalid parameters (required fields: name, age, hobbies).',
 }
 
 export {

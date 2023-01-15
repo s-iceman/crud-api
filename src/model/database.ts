@@ -8,9 +8,6 @@ export class UserDatabase implements IDatabase {
 
   constructor() {
     this.users = new Map();
-    this.users.set(this.generateId(),
-      {age: 13, username: 'Ivan', hobbies: []}
-    );
   }
 
   getUsers(): Array<IUser> {
@@ -26,6 +23,21 @@ export class UserDatabase implements IDatabase {
       return {id: userId, ...this.users.get(userId)};
     }
     throw new UserNotFoundError();
+  }
+
+  createUser(user: IUser): IUser {
+    const userId = this.generateId();
+    this.users.set(userId, user);
+    return {id: userId, ...user};
+  }
+
+  updateUser(user: IUser): IUser | never {
+    const {id, ...updatedUser} = user;
+    if (!this.users.has(id)) {
+      throw new UserNotFoundError();
+    }
+    this.users.set(id, updatedUser);
+    return user;
   }
 
   deleteUser(userId: string): void | never {

@@ -9,7 +9,7 @@ interface IServerService {
 
 interface IRouter {
   connect(database: IDatabase): void;
-  route(req: IncomingMessage, res: ServerResponse): void;
+  route(req: IncomingMessage, res: ServerResponse): Promise<void>;
 }
 
 export {
