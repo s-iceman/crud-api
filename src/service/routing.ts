@@ -18,6 +18,7 @@ export class UsersApiRouter implements IRouter {
     this.handlers = {
       'GET': this.processGetRequest.bind(this),
       'POST': this.processPostRequest.bind(this),
+      'PUT': this.processPutRequest.bind(this),
       'DELETE': this.processDeleteRequest.bind(this),
     };
   }
@@ -56,6 +57,10 @@ export class UsersApiRouter implements IRouter {
     return;
   }
 
+  private processPutRequest(url: string, res: ServerResponse): void {
+    return;
+  }
+
   private processDeleteRequest(url: string, res: ServerResponse): void {
     this.processUser(url, res, this.database.deleteUser.bind(this.database));
   }
@@ -73,7 +78,6 @@ export class UsersApiRouter implements IRouter {
 
     try {
       const result = op(userId);
-      console.log(`!!!! ${result}`);
       if (result) {
         this.sendResult(res, StatusCodes.OK, result);
       } else {
@@ -85,10 +89,13 @@ export class UsersApiRouter implements IRouter {
   }
 
   private sendResult(response: ServerResponse, code: number, result?: ResultType): void {
+    console.log('sendResult', result);
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(code);
     if (result !== undefined) {
       response.end(JSON.stringify(result, null, '\n'));
+    } else {
+      response.end();
     }
   }
 
