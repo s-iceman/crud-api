@@ -28,7 +28,7 @@ npm run start:prod
 
 3. Run tests:
 ```bash
-npm run tests
+npm run test
 ```
 
 ## Endpoint

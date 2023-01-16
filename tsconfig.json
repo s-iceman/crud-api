@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
-    "rootDir": "./src",
     "noImplicitAny": false,
     "module": "CommonJS",
     "target": "es6",
@@ -9,4 +8,7 @@
     "allowJs": true,
     "types": ["@types/node", "@types/jest"]
   },
+  "exclude": [
+    "./tests"
+  ]
 }
